@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 const TURNS = {
@@ -7,21 +7,42 @@ const TURNS = {
 };
 
 const Square = ({ children, isSelected, updateBoard, index }) => {
-  const className = `square ${isSelected ? 'is-selected' : '' }`
-  return <div className={className}>{children}</div>;
+  const className = `square ${isSelected ? 'is-selected' : '' }`;
+  const handleClick = () => {
+    updateBoard(index);
+  };
+
+  return <div onClick={handleClick} className={className}>{children}</div>;
 };
 
 function App() {
-  const [board , setBoard] = useState( Array(9).fill(null));
-  const [turn , setTurn] = useState(TURNS.X)
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [turn, setTurn] = useState(TURNS.X);
+
+  const updateBoard = (index) => {
+    if (board[index] === null) {
+      // Check if the square is already filled
+      const newBoard = [...board]; // Create a new array with the current board state
+      newBoard[index] = turn; // Update the selected square
+      setBoard(newBoard); // Update the state
+
+      const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
+      setTurn(newTurn);
+    }
+  };
 
   return (
     <main className="board">
       <h1>tic tac toe</h1>
       <section className="game">
         {board.map((cell, index) => (
-          <Square key={index} index={index}>
-            {" "}
+          <Square
+            key={index}
+            index={index}
+            isSelected={cell === turn}
+            updateBoard={updateBoard}
+          >
+            {cell}
           </Square>
         ))}
       </section>
