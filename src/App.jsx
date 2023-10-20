@@ -37,14 +37,27 @@ function App() {
 
   const checkWinner = (boardToCheck) => {
     for (const combo of WINNER_COMBOS) {
-      const [a,b,c] = combo
-      if ( boardToCheck[a] && boardToCheck[a] === boardToCheck[b] && boardToCheck[a] === boardToCheck[c] ) {
-        return boardToCheck[a]
+      const [a, b, c] = combo;
+      if (
+        boardToCheck[a] &&
+        boardToCheck[a] === boardToCheck[b] &&
+        boardToCheck[a] === boardToCheck[c]
+      ) {
+        return boardToCheck[a];
       }
     }
-    return null //we don't have a winner
+    return null; //we don't have a winner
+  };
+
+  const restartGame = () =>{
+    setBoard(Array(9).fill(null))
+    setTurn(TURNS.X)
+    setWinner(null)
   }
 
+  const checkEndGame = (newBoard) =>{
+    return newBoard.every((square) => square !== null)
+  }
 
   const updateBoard = (index) => {
     if (board[index] === null && !winner) {
@@ -55,9 +68,11 @@ function App() {
 
       const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
       setTurn(newTurn);
-      const newWinner = checkWinner(newBoard)
-      if (newWinner){
-        setWinner(newWinner)
+      const newWinner = checkWinner(newBoard);
+      if (newWinner) {
+        setWinner(newWinner);
+      } else if (checkEndGame(newBoard)) { 
+        setWinner(false) // it's a tie
       }
     }
   };
@@ -65,15 +80,16 @@ function App() {
   return (
     <main className="board">
       <h1>tic tac toe</h1>
+      <button onClick={restartGame}>Restart Game</button>
       <section className="game">
-        {board.map((cell, index) => (
+        {board.map((square, index) => (
           <Square
             key={index}
             index={index}
-            isSelected={cell === turn}
+            isSelected={square === turn}
             updateBoard={updateBoard}
           >
-            {cell}
+            {square}
           </Square>
         ))}
       </section>
@@ -82,6 +98,23 @@ function App() {
         <Square isSelected={turn === TURNS.X}>{TURNS.X}</Square>
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
+      {winner !== null && (
+        <section className="winner">
+          <div className="text">
+            <h2>
+              {winner === false ? "It's a tie!" : "The winner is " + winner}
+            </h2>
+
+            <header className="win">
+                {winner && <Square>{winner}</Square>}
+            </header>
+
+            <footer>
+              <button onClick={restartGame}>Restart Game</button>
+            </footer>
+          </div>
+        </section>
+      )}
     </main>
   );
 }
