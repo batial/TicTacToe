@@ -1,6 +1,6 @@
 const TURNS = {
-  X: "x",
-  O: "o",
+  X: "✕",
+  O: "◯",
 };
 
 const WINNER_COMBOS = [
